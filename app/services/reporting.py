@@ -535,3 +535,184 @@ class ReportingService:
                 count += 1
 
         return count
+
+    # === Methods for AI Analysis endpoints ===
+
+    async def get_discrepancy_by_id(self, discrepancy_id: str):
+        """Get a discrepancy by its ID. Returns a simple object with discrepancy info."""
+        # Check if it's an unmatched transaction
+        result = await self.db.execute(
+            select(Transaction).where(Transaction.id == discrepancy_id)
+        )
+        txn = result.scalar_one_or_none()
+        if txn:
+            return SimpleDiscrepancy(
+                id=txn.id,
+                discrepancy_type="unmatched_transaction",
+                severity=self._calculate_priority(txn.amount, txn.currency, days_between(txn.timestamp, datetime.now())),
+                description=f"Transaction {txn.transaction_id} unmatched",
+                amount=txn.amount,
+                currency=txn.currency,
+                suggested_actions=["Review potential settlement matches"],
+                suggested_matches=[]
+            )
+
+        # Check if it's an unmatched settlement
+        result = await self.db.execute(
+            select(Settlement).where(Settlement.id == discrepancy_id)
+        )
+        stl = result.scalar_one_or_none()
+        if stl:
+            return SimpleDiscrepancy(
+                id=stl.id,
+                discrepancy_type="unmatched_settlement",
+                severity=self._calculate_priority(stl.amount, stl.currency, days_between(stl.settlement_date, date.today())),
+                description=f"Settlement {stl.settlement_reference} unmatched",
+                amount=stl.amount,
+                currency=stl.currency,
+                suggested_actions=["Review potential transaction matches"],
+                suggested_matches=[]
+            )
+
+        # Check if it's an unmatched adjustment
+        result = await self.db.execute(
+            select(Adjustment).where(Adjustment.id == discrepancy_id)
+        )
+        adj = result.scalar_one_or_none()
+        if adj:
+            return SimpleDiscrepancy(
+                id=adj.id,
+                discrepancy_type="unmatched_adjustment",
+                severity=self._calculate_priority(adj.amount, adj.currency, days_between(adj.date, date.today()), is_adjustment=True),
+                description=f"Adjustment {adj.adjustment_id} ({adj.adjustment_type}) unmatched",
+                amount=adj.amount,
+                currency=adj.currency,
+                suggested_actions=["Review related transactions"],
+                suggested_matches=[]
+            )
+
+        return None
+
+    async def get_discrepancy_context(self, discrepancy_id: str) -> dict:
+        """Get context records related to a discrepancy."""
+        return {"related_records": [], "similar_discrepancies": []}
+
+    async def get_reconciliation_stats(self) -> dict:
+        """Get reconciliation statistics for AI summary."""
+        txn_count = await self.db.scalar(select(func.count(Transaction.id))) or 0
+        stl_count = await self.db.scalar(select(func.count(Settlement.id))) or 0
+        adj_count = await self.db.scalar(select(func.count(Adjustment.id))) or 0
+        match_count = await self.db.scalar(select(func.count(MatchResult.id))) or 0
+
+        unmatched_txns = await self._get_unmatched_transactions()
+        unmatched_stls = await self._get_unmatched_settlements()
+        unmatched_adjs = await self._get_unmatched_adjustments()
+
+        total_discrepancy_usd = sum(
+            convert_to_usd(t.amount, t.currency) for t in unmatched_txns
+        ) + sum(
+            convert_to_usd(s.amount, s.currency) for s in unmatched_stls
+        ) + sum(
+            convert_to_usd(a.amount, a.currency) for a in unmatched_adjs
+        )
+
+        match_rate = match_count / max(txn_count, 1)
+
+        return {
+            "total_transactions": txn_count,
+            "total_settlements": stl_count,
+            "total_adjustments": adj_count,
+            "matched": match_count,
+            "unmatched_transactions": len(unmatched_txns),
+            "unmatched_settlements": len(unmatched_stls),
+            "unmatched_adjustments": len(unmatched_adjs),
+            "match_rate": match_rate,
+            "total_discrepancy_value_usd": float(total_discrepancy_usd),
+            "high_priority_count": sum(1 for t in unmatched_txns if self._calculate_priority(t.amount, t.currency, 7) == "high")
+        }
+
+    async def get_high_priority_discrepancies(self) -> list:
+        """Get high priority discrepancies."""
+        result = []
+        unmatched_txns = await self._get_unmatched_transactions()
+        for txn in unmatched_txns:
+            age = days_between(txn.timestamp, datetime.now())
+            if self._calculate_priority(txn.amount, txn.currency, age) == "high":
+                result.append(SimpleDiscrepancy(
+                    id=txn.id,
+                    discrepancy_type="unmatched_transaction",
+                    severity="high",
+                    description=f"High priority: Transaction {txn.transaction_id}",
+                    amount=txn.amount,
+                    currency=txn.currency,
+                    suggested_actions=[],
+                    suggested_matches=[]
+                ))
+        return result
+
+    async def get_discrepancies_for_period(self, days: int = 30) -> list:
+        """Get discrepancies within a time period."""
+        threshold = datetime.now() - timedelta(days=days)
+        result = []
+
+        # Get unmatched transactions in period
+        stmt = select(Transaction).where(
+            Transaction.timestamp >= threshold,
+            Transaction.id.not_in(
+                select(MatchResult.transaction_id).where(MatchResult.transaction_id.isnot(None))
+            )
+        )
+        txns = await self.db.execute(stmt)
+        for txn in txns.scalars().all():
+            result.append(SimpleDiscrepancy(
+                id=txn.id,
+                discrepancy_type="unmatched_transaction",
+                severity=self._calculate_priority(txn.amount, txn.currency, days_between(txn.timestamp, datetime.now())),
+                description=f"Transaction {txn.transaction_id} unmatched",
+                amount=txn.amount,
+                currency=txn.currency,
+                suggested_actions=[],
+                suggested_matches=[],
+                created_at=txn.timestamp
+            ))
+
+        return result
+
+    async def get_recent_settlements(self, limit: int = 100) -> list[Settlement]:
+        """Get recent settlements."""
+        result = await self.db.execute(
+            select(Settlement).order_by(Settlement.settlement_date.desc()).limit(limit)
+        )
+        return result.scalars().all()
+
+    async def get_recent_adjustments(self, limit: int = 100) -> list[Adjustment]:
+        """Get recent adjustments."""
+        result = await self.db.execute(
+            select(Adjustment).order_by(Adjustment.date.desc()).limit(limit)
+        )
+        return result.scalars().all()
+
+
+class SimpleDiscrepancy:
+    """Simple discrepancy object for AI analysis."""
+    def __init__(
+        self,
+        id: str,
+        discrepancy_type: str,
+        severity: str,
+        description: str,
+        amount: Decimal,
+        currency: str,
+        suggested_actions: list,
+        suggested_matches: list,
+        created_at: Optional[datetime] = None
+    ):
+        self.id = id
+        self.discrepancy_type = discrepancy_type
+        self.severity = severity
+        self.description = description
+        self.amount = amount
+        self.currency = currency
+        self.suggested_actions = suggested_actions
+        self.suggested_matches = suggested_matches
+        self.created_at = created_at or datetime.now()

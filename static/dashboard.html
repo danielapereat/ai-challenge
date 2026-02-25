@@ -520,6 +520,904 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* =====================================================
+           AI INSIGHTS SECTION STYLES
+           ===================================================== */
+
+        /* Tab Navigation for AI Insights */
+        .ai-tabs {
+            display: flex;
+            gap: 4px;
+            background-color: var(--bg-color);
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .ai-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .ai-tab:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .ai-tab.active {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ai-tab:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .ai-tab-content {
+            display: none;
+        }
+
+        .ai-tab-content.active {
+            display: block;
+        }
+
+        /* Executive Summary Card */
+        .executive-summary {
+            background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+            border-radius: 12px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .executive-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .executive-summary-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .executive-summary-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .executive-summary-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .insights-list {
+            list-style: none;
+        }
+
+        .insights-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .insights-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insight-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .insight-icon.positive {
+            background-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .insight-icon.negative {
+            background-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .insight-icon.neutral {
+            background-color: rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+        }
+
+        .insight-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        .trend-up {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .trend-down {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .trend-neutral {
+            background-color: rgba(148, 163, 184, 0.2);
+            color: #cbd5e1;
+        }
+
+        .action-items-section h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+
+        .action-priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .action-priority.high {
+            background-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .action-priority.medium {
+            background-color: rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+        }
+
+        .action-priority.low {
+            background-color: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* Anomaly Alerts Section */
+        .anomaly-alerts {
+            margin-bottom: 24px;
+        }
+
+        .alert-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .alert-banner.critical {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-banner.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert-banner.info {
+            background-color: rgba(37, 99, 235, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .alert-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .alert-banner.critical .alert-icon {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        .alert-banner.warning .alert-icon {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .alert-banner.info .alert-icon {
+            background-color: rgba(37, 99, 235, 0.2);
+            color: var(--primary-color);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .alert-description {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .alert-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .alert-dismiss {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            line-height: 1;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .alert-dismiss:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-dismiss:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Pattern Detection Cards */
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .pattern-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid transparent;
+        }
+
+        .pattern-card.severity-critical {
+            border-left-color: var(--danger-color);
+        }
+
+        .pattern-card.severity-warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .pattern-card.severity-info {
+            border-left-color: var(--primary-color);
+        }
+
+        .pattern-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .pattern-title {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        .pattern-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .pattern-severity.critical {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger-color-text);
+        }
+
+        .pattern-severity.warning {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color-text);
+        }
+
+        .pattern-severity.info {
+            background-color: rgba(37, 99, 235, 0.15);
+            color: var(--primary-dark);
+        }
+
+        .pattern-description {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .pattern-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pattern-stat {
+            text-align: center;
+        }
+
+        .pattern-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .pattern-stat-label {
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Discrepancy Analysis */
+        .discrepancy-analysis {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .discrepancy-analysis h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .probability-list {
+            margin-bottom: 20px;
+        }
+
+        .probability-item {
+            margin-bottom: 12px;
+        }
+
+        .probability-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .probability-label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .probability-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .probability-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .probability-fill.high {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .probability-fill.medium {
+            background: linear-gradient(90deg, var(--warning-color), #d97706);
+        }
+
+        .probability-fill.low {
+            background: linear-gradient(90deg, var(--success-color), #059669);
+        }
+
+        .evidence-section h4 {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .evidence-list {
+            list-style: none;
+        }
+
+        .evidence-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.8125rem;
+        }
+
+        .evidence-bullet {
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        /* Intelligent Suggestions */
+        .suggestions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .suggestion-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .suggestion-card:hover {
+            border-color: var(--primary-color);
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .suggestion-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .confidence-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .confidence-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .confidence-circle.high {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success-color-text);
+            border: 3px solid var(--success-color);
+        }
+
+        .confidence-circle.medium {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color-text);
+            border: 3px solid var(--warning-color);
+        }
+
+        .confidence-circle.low {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--danger-color-text);
+            border: 3px solid var(--danger-color);
+        }
+
+        .confidence-label {
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .suggestion-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .suggestion-reasons {
+            margin-bottom: 16px;
+        }
+
+        .suggestion-reasons h4 {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .reason-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .reason-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--primary-dark);
+        }
+
+        .reason-tag .checkmark {
+            color: var(--success-color);
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            border: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Match Explanation Panel */
+        .match-row-expandable {
+            cursor: pointer;
+        }
+
+        .match-row-expandable:hover {
+            background-color: rgba(37, 99, 235, 0.08);
+        }
+
+        .expand-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            color: var(--text-secondary);
+            transition: transform 0.2s;
+        }
+
+        .match-row-expandable.expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .match-explanation-row {
+            display: none;
+            background-color: var(--bg-color);
+        }
+
+        .match-explanation-row.visible {
+            display: table-row;
+        }
+
+        .match-explanation-content {
+            padding: 16px 20px;
+        }
+
+        .explanation-summary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .explanation-icon {
+            width: 32px;
+            height: 32px;
+            background-color: rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success-color);
+            font-size: 1rem;
+        }
+
+        .explanation-text {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .match-criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--card-bg);
+            border-radius: 6px;
+        }
+
+        .criteria-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .criteria-status.pass {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+
+        .criteria-status.partial {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .criteria-status.fail {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        .criteria-details {
+            flex: 1;
+        }
+
+        .criteria-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .criteria-value {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* AI Section Header */
+        .ai-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .ai-section-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .refresh-ai-btn {
+            padding: 8px 16px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: background-color 0.2s;
+        }
+
+        .refresh-ai-btn:hover {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Empty/Loading states for AI sections */
+        .ai-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .ai-loading .spinner {
+            margin-bottom: 12px;
+        }
+
+        .ai-loading-text {
+            font-size: 0.875rem;
+        }
+
+        .ai-empty-state {
+            text-align: center;
+            padding: 40px;
+            background-color: var(--bg-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+        }
+
+        .ai-empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .ai-empty-text {
+            font-size: 0.9375rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .ai-empty-subtext {
+            font-size: 0.8125rem;
+        }
+
+        /* Reduced motion support for AI components */
+        @media (prefers-reduced-motion: reduce) {
+            .probability-fill,
+            .expand-icon,
+            .suggestion-card,
+            .btn,
+            .alert-dismiss {
+                transition: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -569,6 +1467,30 @@
                 <span class="value" id="lastUpdated">-</span>
             </div>
         </div>
+
+        <!-- AI Executive Summary Card (Feature 4) -->
+        <section class="executive-summary" id="executiveSummary" aria-labelledby="executiveSummaryTitle" role="region">
+            <div class="executive-summary-header">
+                <h2 id="executiveSummaryTitle">
+                    <span aria-hidden="true">&#x1F9E0;</span> AI Executive Summary
+                    <span class="ai-badge">AI Powered</span>
+                </h2>
+                <span class="timestamp" id="summaryTimestamp">Updated: --</span>
+            </div>
+            <div class="executive-summary-content" id="executiveSummaryContent">
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <span class="ai-loading-text">Analyzing reconciliation data...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Anomaly Alerts Section (Feature 6) -->
+        <section class="anomaly-alerts" id="anomalyAlertsSection" aria-labelledby="anomalyAlertsTitle" role="alert" aria-live="polite">
+            <div id="anomalyAlerts">
+                <!-- Alerts will be dynamically inserted here -->
+            </div>
+        </section>
 
         <!-- Summary Cards -->
         <div class="summary-grid">
@@ -648,6 +1570,91 @@
                 </div>
             </div>
         </div>
+
+        <!-- AI Insights Section -->
+        <section class="card full-width" id="aiInsightsSection" aria-labelledby="aiInsightsTitle">
+            <div class="card-header">
+                <h2 id="aiInsightsTitle">
+                    <span aria-hidden="true">&#x2728;</span> AI Insights
+                </h2>
+                <button class="refresh-ai-btn" id="refreshAiBtn" onclick="refreshAIInsights()" aria-label="Refresh AI insights">
+                    <span aria-hidden="true">&#x21BB;</span> Refresh Insights
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- AI Tabs Navigation -->
+                <div class="ai-tabs" role="tablist" aria-label="AI Insights categories">
+                    <button class="ai-tab active"
+                            role="tab"
+                            id="tab-patterns"
+                            aria-selected="true"
+                            aria-controls="panel-patterns"
+                            onclick="switchAITab('patterns')">
+                        Pattern Detection
+                    </button>
+                    <button class="ai-tab"
+                            role="tab"
+                            id="tab-suggestions"
+                            aria-selected="false"
+                            aria-controls="panel-suggestions"
+                            onclick="switchAITab('suggestions')">
+                        Intelligent Suggestions
+                    </button>
+                    <button class="ai-tab"
+                            role="tab"
+                            id="tab-analysis"
+                            aria-selected="false"
+                            aria-controls="panel-analysis"
+                            onclick="switchAITab('analysis')">
+                        Discrepancy Analysis
+                    </button>
+                </div>
+
+                <!-- Tab Panel: Pattern Detection (Feature 5) -->
+                <div class="ai-tab-content active"
+                     role="tabpanel"
+                     id="panel-patterns"
+                     aria-labelledby="tab-patterns"
+                     tabindex="0">
+                    <div class="pattern-grid" id="patternGrid">
+                        <div class="ai-loading">
+                            <div class="spinner"></div>
+                            <span class="ai-loading-text">Detecting patterns...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Panel: Intelligent Suggestions (Feature 3) -->
+                <div class="ai-tab-content"
+                     role="tabpanel"
+                     id="panel-suggestions"
+                     aria-labelledby="tab-suggestions"
+                     tabindex="0"
+                     hidden>
+                    <div class="suggestions-container" id="suggestionsContainer">
+                        <div class="ai-loading">
+                            <div class="spinner"></div>
+                            <span class="ai-loading-text">Generating suggestions...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Panel: Discrepancy Analysis (Feature 2) -->
+                <div class="ai-tab-content"
+                     role="tabpanel"
+                     id="panel-analysis"
+                     aria-labelledby="tab-analysis"
+                     tabindex="0"
+                     hidden>
+                    <div id="discrepancyAnalysis">
+                        <div class="ai-loading">
+                            <div class="spinner"></div>
+                            <span class="ai-loading-text">Analyzing discrepancies...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <script>
@@ -728,6 +1735,12 @@
                 case 'unmatched': return 'badge-danger';
                 default: return 'badge-info';
             }
+        }
+
+        // Get safe severity class (security: allowlist pattern)
+        const VALID_SEVERITIES = new Set(['critical', 'warning', 'info']);
+        function getSafeSeverityClass(severity) {
+            return VALID_SEVERITIES.has(severity) ? severity : 'info';
         }
 
         // Get type badge class
@@ -849,6 +1862,7 @@
                     <table>
                         <thead>
                             <tr>
+                                <th scope="col" style="width: 30px;"></th>
                                 <th scope="col">Transaction ID</th>
                                 <th scope="col">Amount</th>
                                 <th scope="col">Confidence</th>
@@ -856,8 +1870,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${highConfidence.slice(0, 10).map(match => `
-                                <tr>
+                            ${highConfidence.slice(0, 10).map((match, index) => {
+                                const matchId = match.match_id || `match-${index}`;
+                                return `
+                                <tr class="match-row-expandable"
+                                    onclick="toggleMatchExplanation('${escapeHtml(matchId)}', this)"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-expanded="false"
+                                    aria-controls="explanation-${escapeHtml(matchId)}"
+                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMatchExplanation('${escapeHtml(matchId)}', this);}">
+                                    <td><span class="expand-icon" aria-hidden="true">&#x25B6;</span></td>
                                     <td>${escapeHtml(match.transaction?.transaction_id)}</td>
                                     <td class="amount">${escapeHtml(formatCurrency(match.transaction?.amount, match.transaction?.currency))}</td>
                                     <td>
@@ -869,7 +1892,18 @@
                                     </td>
                                     <td><span class="badge ${getStatusBadgeClass(match.status)}">${escapeHtml(match.status)}</span></td>
                                 </tr>
-                            `).join('')}
+                                <tr class="match-explanation-row" id="explanation-${escapeHtml(matchId)}">
+                                    <td colspan="5">
+                                        <div class="match-explanation-content">
+                                            <div class="loading">
+                                                <div class="spinner"></div>
+                                                Click row to load AI explanation...
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            }).join('')}
                         </tbody>
                     </table>
                 `;
@@ -1013,7 +2047,963 @@
             if (toggle.checked) {
                 autoRefreshInterval = setInterval(refreshData, REFRESH_INTERVAL);
             }
+
+            // Initialize AI Insights
+            initializeAIInsights();
         });
+
+        // =====================================================
+        // AI INSIGHTS FUNCTIONALITY
+        // =====================================================
+
+        // State for dismissed alerts
+        let dismissedAlerts = new Set();
+
+        // =====================================================
+        // MOCK DATA FUNCTIONS
+        // These will be replaced with real API calls when ready
+        // =====================================================
+
+        /**
+         * Mock data for Executive Summary (Feature 4)
+         * TODO: Replace with API call to /api/v1/ai/executive-summary
+         */
+        function getMockExecutiveSummary() {
+            return {
+                timestamp: new Date().toISOString(),
+                insights: [
+                    {
+                        type: 'positive',
+                        text: 'Match rate improved by 3.2% compared to last week',
+                        trend: 'up',
+                        trendValue: '+3.2%'
+                    },
+                    {
+                        type: 'negative',
+                        text: 'BBVA settlements showing 3-day average delay pattern',
+                        trend: 'down',
+                        trendValue: '-3 days'
+                    },
+                    {
+                        type: 'neutral',
+                        text: 'USD/MXN conversion variance within normal range (0.8%)',
+                        trend: 'neutral',
+                        trendValue: '0.8%'
+                    },
+                    {
+                        type: 'negative',
+                        text: 'Chargeback cluster detected: 12 cases from same merchant',
+                        trend: 'down',
+                        trendValue: '+12'
+                    }
+                ],
+                actionItems: [
+                    {
+                        priority: 'high',
+                        text: 'Review 5 high-value unmatched transactions ($45,230 total)'
+                    },
+                    {
+                        priority: 'medium',
+                        text: 'Investigate BBVA settlement delay pattern'
+                    },
+                    {
+                        priority: 'low',
+                        text: 'Update fee rules for PayU processor'
+                    }
+                ]
+            };
+        }
+
+        /**
+         * Mock data for Anomaly Alerts (Feature 6)
+         * TODO: Replace with API call to /api/v1/ai/anomalies
+         */
+        function getMockAnomalyAlerts() {
+            return [
+                {
+                    id: 'alert-001',
+                    severity: 'critical',
+                    title: 'Fee Outlier Detected',
+                    description: 'Transaction TXN-2024-78432 has a 15.5% processing fee, significantly above the 2.9% average.',
+                    timestamp: new Date(Date.now() - 1800000).toISOString(),
+                    source: 'Stripe',
+                    affectedAmount: 1234.56
+                },
+                {
+                    id: 'alert-002',
+                    severity: 'warning',
+                    title: 'Chargeback Cluster',
+                    description: '8 chargebacks from merchant "TechStore Pro" in the last 24 hours, exceeding normal threshold.',
+                    timestamp: new Date(Date.now() - 3600000).toISOString(),
+                    source: 'Multiple Processors',
+                    affectedCount: 8
+                },
+                {
+                    id: 'alert-003',
+                    severity: 'info',
+                    title: 'Settlement Timing Anomaly',
+                    description: 'BBVA settlements arriving 2 days later than expected this week.',
+                    timestamp: new Date(Date.now() - 7200000).toISOString(),
+                    source: 'BBVA',
+                    affectedCount: 23
+                }
+            ];
+        }
+
+        /**
+         * Mock data for Pattern Detection (Feature 5)
+         * TODO: Replace with API call to /api/v1/ai/patterns
+         */
+        function getMockPatternDetection() {
+            return [
+                {
+                    id: 'pattern-001',
+                    title: 'BBVA: 3-Day Settlement Delay',
+                    severity: 'warning',
+                    description: 'BBVA settlements consistently arriving 3 days after expected date. Pattern started 2 weeks ago.',
+                    stats: {
+                        occurrences: 47,
+                        avgDelay: '3.2 days',
+                        totalAmount: '$125,430'
+                    }
+                },
+                {
+                    id: 'pattern-002',
+                    title: 'PayU Fee Variance',
+                    severity: 'info',
+                    description: 'PayU processing fees showing 0.3% variance from agreed rate on transactions over $500.',
+                    stats: {
+                        occurrences: 23,
+                        variance: '0.3%',
+                        totalImpact: '$342'
+                    }
+                },
+                {
+                    id: 'pattern-003',
+                    title: 'Weekend Processing Delays',
+                    severity: 'info',
+                    description: 'Transactions submitted Friday-Sunday showing 48-hour additional processing time.',
+                    stats: {
+                        occurrences: 156,
+                        avgDelay: '48 hrs',
+                        affected: '12%'
+                    }
+                },
+                {
+                    id: 'pattern-004',
+                    title: 'Currency Conversion Timing',
+                    severity: 'critical',
+                    description: 'MXN to USD conversions using rates 24 hours older than transaction time.',
+                    stats: {
+                        occurrences: 89,
+                        avgVariance: '1.8%',
+                        totalImpact: '$2,340'
+                    }
+                }
+            ];
+        }
+
+        /**
+         * Mock data for Intelligent Suggestions (Feature 3)
+         * TODO: Replace with API call to /api/v1/ai/suggestions
+         */
+        function getMockIntelligentSuggestions() {
+            return [
+                {
+                    id: 'suggestion-001',
+                    unmatchedRecord: {
+                        type: 'transaction',
+                        id: 'TXN-2024-98234',
+                        amount: 1500.00,
+                        currency: 'USD',
+                        date: '2024-01-15'
+                    },
+                    suggestedMatch: {
+                        type: 'settlement',
+                        id: 'STL-BBVA-45678',
+                        amount: 1456.50,
+                        currency: 'USD',
+                        date: '2024-01-18'
+                    },
+                    confidence: 87,
+                    reasons: [
+                        'Merchant ID match',
+                        'Amount within 3% (fee deduction)',
+                        'Same currency',
+                        'Settlement within expected window'
+                    ]
+                },
+                {
+                    id: 'suggestion-002',
+                    unmatchedRecord: {
+                        type: 'settlement',
+                        id: 'STL-STRIPE-78901',
+                        amount: 2340.00,
+                        currency: 'MXN',
+                        date: '2024-01-16'
+                    },
+                    suggestedMatch: {
+                        type: 'transaction',
+                        id: 'TXN-2024-87654',
+                        amount: 2400.00,
+                        currency: 'MXN',
+                        date: '2024-01-14'
+                    },
+                    confidence: 72,
+                    reasons: [
+                        'Reference partial match',
+                        'Amount within 2.5% tolerance',
+                        'Same currency'
+                    ]
+                },
+                {
+                    id: 'suggestion-003',
+                    unmatchedRecord: {
+                        type: 'transaction',
+                        id: 'TXN-2024-11223',
+                        amount: 890.00,
+                        currency: 'COP',
+                        date: '2024-01-17'
+                    },
+                    suggestedMatch: {
+                        type: 'settlement',
+                        id: 'STL-PAYU-33445',
+                        amount: 864.30,
+                        currency: 'COP',
+                        date: '2024-01-19'
+                    },
+                    confidence: 94,
+                    reasons: [
+                        'Exact transaction ID reference',
+                        'Standard fee deduction (2.9%)',
+                        'Same currency',
+                        'Expected settlement date'
+                    ]
+                }
+            ];
+        }
+
+        /**
+         * Mock data for Discrepancy Analysis (Feature 2)
+         * TODO: Replace with API call to /api/v1/ai/discrepancy-analysis
+         */
+        function getMockDiscrepancyAnalysis() {
+            return {
+                selectedDiscrepancy: {
+                    id: 'DISC-2024-001',
+                    type: 'amount_mismatch',
+                    transactionAmount: 1500.00,
+                    settlementAmount: 1456.50,
+                    difference: 43.50,
+                    currency: 'USD'
+                },
+                rootCauses: [
+                    {
+                        cause: 'Processing Fee Deduction',
+                        probability: 60,
+                        level: 'high'
+                    },
+                    {
+                        cause: 'Currency Conversion Spread',
+                        probability: 25,
+                        level: 'medium'
+                    },
+                    {
+                        cause: 'Data Entry Error',
+                        probability: 10,
+                        level: 'low'
+                    },
+                    {
+                        cause: 'Partial Refund Applied',
+                        probability: 5,
+                        level: 'low'
+                    }
+                ],
+                evidence: [
+                    'Difference of $43.50 represents 2.9% of transaction amount - consistent with standard Stripe processing fee.',
+                    'Merchant agreement shows 2.9% + $0.30 fee structure.',
+                    'No refund requests found for this transaction.',
+                    'Settlement currency matches transaction currency (no FX conversion).'
+                ]
+            };
+        }
+
+        /**
+         * Mock data for Match Explanation (Feature 1)
+         * TODO: Replace with API call to /api/v1/ai/match-explanation/{matchId}
+         */
+        function getMockMatchExplanation(matchId) {
+            const explanations = {
+                'default': {
+                    summary: 'Matched: Exact ID match, same currency, amount within 2.9% tolerance (fee deduction)',
+                    criteria: [
+                        { name: 'Transaction ID', status: 'pass', value: 'Exact match' },
+                        { name: 'Currency', status: 'pass', value: 'USD = USD' },
+                        { name: 'Amount', status: 'partial', value: 'Within 2.9% (fee)' },
+                        { name: 'Merchant', status: 'pass', value: 'MID-12345' },
+                        { name: 'Date Range', status: 'pass', value: 'Within 5 days' },
+                        { name: 'Reference', status: 'pass', value: 'REF match' }
+                    ]
+                }
+            };
+            return explanations[matchId] || explanations['default'];
+        }
+
+        // =====================================================
+        // API WRAPPER FUNCTIONS
+        // These functions will call real APIs when available
+        // =====================================================
+
+        /**
+         * Fetch Executive Summary from AI API
+         * @returns {Promise<Object>} Executive summary data
+         */
+        async function fetchExecutiveSummary() {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/executive-summary`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                // Using mock data for now
+                await simulateNetworkDelay(800);
+                return getMockExecutiveSummary();
+            } catch (error) {
+                console.error('Error fetching executive summary:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Fetch Anomaly Alerts from AI API
+         * @returns {Promise<Array>} Array of anomaly alerts
+         */
+        async function fetchAnomalyAlerts() {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/anomalies`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(600);
+                return getMockAnomalyAlerts();
+            } catch (error) {
+                console.error('Error fetching anomaly alerts:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Fetch Pattern Detection from AI API
+         * @returns {Promise<Array>} Array of detected patterns
+         */
+        async function fetchPatternDetection() {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/patterns`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(1000);
+                return getMockPatternDetection();
+            } catch (error) {
+                console.error('Error fetching patterns:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Fetch Intelligent Suggestions from AI API
+         * @returns {Promise<Array>} Array of match suggestions
+         */
+        async function fetchIntelligentSuggestions() {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/suggestions`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(1200);
+                return getMockIntelligentSuggestions();
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Fetch Discrepancy Analysis from AI API
+         * @returns {Promise<Object>} Discrepancy analysis data
+         */
+        async function fetchDiscrepancyAnalysis() {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/discrepancy-analysis`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(900);
+                return getMockDiscrepancyAnalysis();
+            } catch (error) {
+                console.error('Error fetching discrepancy analysis:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Fetch Match Explanation from AI API
+         * @param {string} matchId - The match ID to explain
+         * @returns {Promise<Object>} Match explanation data
+         */
+        async function fetchMatchExplanation(matchId) {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/match-explanation/${matchId}`);
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(400);
+                return getMockMatchExplanation(matchId);
+            } catch (error) {
+                console.error('Error fetching match explanation:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Submit suggestion review action
+         * @param {string} suggestionId - The suggestion ID
+         * @param {string} action - 'approve' or 'reject'
+         * @returns {Promise<Object>} Action result
+         */
+        async function submitSuggestionAction(suggestionId, action) {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/suggestions/${suggestionId}/${action}`, {
+                //     method: 'POST'
+                // });
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                await simulateNetworkDelay(500);
+                console.log(`Suggestion ${suggestionId} ${action}ed (mock)`);
+                return { success: true, message: `Suggestion ${action}ed successfully` };
+            } catch (error) {
+                console.error('Error submitting suggestion action:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * Dismiss an anomaly alert
+         * @param {string} alertId - The alert ID to dismiss
+         * @returns {Promise<Object>} Dismiss result
+         */
+        async function dismissAlert(alertId) {
+            try {
+                // TODO: Uncomment when API is ready
+                // const response = await fetch(`${API_BASE}/ai/alerts/${alertId}/dismiss`, {
+                //     method: 'POST'
+                // });
+                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                // return await response.json();
+
+                dismissedAlerts.add(alertId);
+                return { success: true };
+            } catch (error) {
+                console.error('Error dismissing alert:', error);
+                throw error;
+            }
+        }
+
+        // =====================================================
+        // RENDERING FUNCTIONS
+        // =====================================================
+
+        /**
+         * Render Executive Summary (Feature 4)
+         */
+        async function renderExecutiveSummary() {
+            const container = document.getElementById('executiveSummaryContent');
+            const timestampEl = document.getElementById('summaryTimestamp');
+
+            try {
+                const data = await fetchExecutiveSummary();
+
+                timestampEl.textContent = `Updated: ${formatRelativeTime(data.timestamp)}`;
+
+                const insightsHtml = data.insights.map(insight => {
+                    const iconClass = insight.type;
+                    const icon = insight.type === 'positive' ? '&#x2191;' :
+                                 insight.type === 'negative' ? '&#x2193;' : '&#x2192;';
+                    const trendClass = insight.trend === 'up' ? 'trend-up' :
+                                       insight.trend === 'down' ? 'trend-down' : 'trend-neutral';
+
+                    return `
+                        <li>
+                            <span class="insight-icon ${iconClass}" aria-hidden="true">${icon}</span>
+                            <span class="insight-text">
+                                ${escapeHtml(insight.text)}
+                                <span class="trend-indicator ${trendClass}" aria-label="Trend: ${escapeHtml(insight.trendValue)}">
+                                    ${escapeHtml(insight.trendValue)}
+                                </span>
+                            </span>
+                        </li>
+                    `;
+                }).join('');
+
+                const actionItemsHtml = data.actionItems.map(item => `
+                    <div class="action-item">
+                        <span class="action-priority ${escapeHtml(item.priority)}">${escapeHtml(item.priority)}</span>
+                        <span>${escapeHtml(item.text)}</span>
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="insights-section">
+                        <ul class="insights-list" aria-label="Key insights">
+                            ${insightsHtml}
+                        </ul>
+                    </div>
+                    <div class="action-items-section">
+                        <h3>Recommended Actions</h3>
+                        ${actionItemsHtml}
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load executive summary. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Render Anomaly Alerts (Feature 6)
+         */
+        async function renderAnomalyAlerts() {
+            const container = document.getElementById('anomalyAlerts');
+
+            try {
+                const alerts = await fetchAnomalyAlerts();
+
+                const filteredAlerts = alerts.filter(alert => !dismissedAlerts.has(alert.id));
+
+                if (filteredAlerts.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                container.innerHTML = filteredAlerts.map(alert => {
+                    const icon = alert.severity === 'critical' ? '&#x26A0;' :
+                                 alert.severity === 'warning' ? '&#x26A0;' : '&#x2139;';
+
+                    return `
+                        <div class="alert-banner ${getSafeSeverityClass(alert.severity)}" role="alert" data-alert-id="${escapeHtml(alert.id)}">
+                            <span class="alert-icon" aria-hidden="true">${icon}</span>
+                            <div class="alert-content">
+                                <div class="alert-title">${escapeHtml(alert.title)}</div>
+                                <div class="alert-description">${escapeHtml(alert.description)}</div>
+                                <div class="alert-meta">
+                                    <span>Source: ${escapeHtml(alert.source)}</span>
+                                    <span>${formatRelativeTime(alert.timestamp)}</span>
+                                </div>
+                            </div>
+                            <button class="alert-dismiss"
+                                    onclick="handleDismissAlert('${escapeHtml(alert.id)}')"
+                                    aria-label="Dismiss alert: ${escapeHtml(alert.title)}">
+                                &#x2715;
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error rendering anomaly alerts:', error);
+                container.innerHTML = '';
+            }
+        }
+
+        /**
+         * Render Pattern Detection (Feature 5)
+         */
+        async function renderPatternDetection() {
+            const container = document.getElementById('patternGrid');
+
+            try {
+                const patterns = await fetchPatternDetection();
+
+                if (patterns.length === 0) {
+                    container.innerHTML = `
+                        <div class="ai-empty-state">
+                            <div class="ai-empty-icon" aria-hidden="true">&#x1F50D;</div>
+                            <div class="ai-empty-text">No patterns detected</div>
+                            <div class="ai-empty-subtext">The AI is continuously monitoring for patterns in your reconciliation data.</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = patterns.map(pattern => {
+                    const statsHtml = Object.entries(pattern.stats).map(([key, value]) => `
+                        <div class="pattern-stat">
+                            <div class="pattern-stat-value">${escapeHtml(String(value))}</div>
+                            <div class="pattern-stat-label">${escapeHtml(key.replace(/([A-Z])/g, ' $1').trim())}</div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <article class="pattern-card severity-${getSafeSeverityClass(pattern.severity)}" aria-labelledby="pattern-${escapeHtml(pattern.id)}">
+                            <div class="pattern-header">
+                                <h3 class="pattern-title" id="pattern-${escapeHtml(pattern.id)}">${escapeHtml(pattern.title)}</h3>
+                                <span class="pattern-severity ${getSafeSeverityClass(pattern.severity)}">${escapeHtml(pattern.severity)}</span>
+                            </div>
+                            <p class="pattern-description">${escapeHtml(pattern.description)}</p>
+                            <div class="pattern-stats">
+                                ${statsHtml}
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load patterns. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Render Intelligent Suggestions (Feature 3)
+         */
+        async function renderIntelligentSuggestions() {
+            const container = document.getElementById('suggestionsContainer');
+
+            try {
+                const suggestions = await fetchIntelligentSuggestions();
+
+                if (suggestions.length === 0) {
+                    container.innerHTML = `
+                        <div class="ai-empty-state">
+                            <div class="ai-empty-icon" aria-hidden="true">&#x2728;</div>
+                            <div class="ai-empty-text">No suggestions available</div>
+                            <div class="ai-empty-subtext">All records have been matched or no AI suggestions could be generated.</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = suggestions.map(suggestion => {
+                    const confidenceClass = suggestion.confidence >= 80 ? 'high' :
+                                           suggestion.confidence >= 60 ? 'medium' : 'low';
+
+                    const reasonsHtml = suggestion.reasons.map(reason => `
+                        <span class="reason-tag">
+                            <span class="checkmark" aria-hidden="true">&#x2713;</span>
+                            ${escapeHtml(reason)}
+                        </span>
+                    `).join('');
+
+                    return `
+                        <article class="suggestion-card" aria-labelledby="suggestion-title-${escapeHtml(suggestion.id)}">
+                            <div class="suggestion-header">
+                                <div>
+                                    <h3 class="suggestion-title" id="suggestion-title-${escapeHtml(suggestion.id)}">
+                                        Suggested Match for ${escapeHtml(suggestion.unmatchedRecord.id)}
+                                    </h3>
+                                    <div class="suggestion-subtitle">
+                                        ${escapeHtml(suggestion.unmatchedRecord.type)} &#x2192; ${escapeHtml(suggestion.suggestedMatch.type)}
+                                    </div>
+                                </div>
+                                <div class="confidence-indicator">
+                                    <div class="confidence-circle ${confidenceClass}" aria-label="Confidence score ${suggestion.confidence}%">
+                                        ${escapeHtml(String(suggestion.confidence))}%
+                                    </div>
+                                    <span class="confidence-label">Confidence</span>
+                                </div>
+                            </div>
+                            <div class="suggestion-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Unmatched Record</div>
+                                    <div class="detail-value">${escapeHtml(formatCurrency(suggestion.unmatchedRecord.amount, suggestion.unmatchedRecord.currency))}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Suggested Match</div>
+                                    <div class="detail-value">${escapeHtml(formatCurrency(suggestion.suggestedMatch.amount, suggestion.suggestedMatch.currency))}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Record Date</div>
+                                    <div class="detail-value">${escapeHtml(suggestion.unmatchedRecord.date)}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Match Date</div>
+                                    <div class="detail-value">${escapeHtml(suggestion.suggestedMatch.date)}</div>
+                                </div>
+                            </div>
+                            <div class="suggestion-reasons">
+                                <h4>Match Criteria</h4>
+                                <div class="reason-tags">
+                                    ${reasonsHtml}
+                                </div>
+                            </div>
+                            <div class="suggestion-actions">
+                                <button class="btn btn-primary"
+                                        onclick="handleReviewSuggestion('${escapeHtml(suggestion.id)}', 'approve', event)"
+                                        aria-label="Approve match suggestion for ${escapeHtml(suggestion.unmatchedRecord.id)}">
+                                    Approve Match
+                                </button>
+                                <button class="btn btn-secondary"
+                                        onclick="handleReviewSuggestion('${escapeHtml(suggestion.id)}', 'reject', event)"
+                                        aria-label="Reject match suggestion for ${escapeHtml(suggestion.unmatchedRecord.id)}">
+                                    Reject
+                                </button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load suggestions. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Render Discrepancy Analysis (Feature 2)
+         */
+        async function renderDiscrepancyAnalysis() {
+            const container = document.getElementById('discrepancyAnalysis');
+
+            try {
+                const data = await fetchDiscrepancyAnalysis();
+
+                const probabilitiesHtml = data.rootCauses.map(cause => `
+                    <div class="probability-item">
+                        <div class="probability-header">
+                            <span class="probability-label">${escapeHtml(cause.cause)}</span>
+                            <span class="probability-value">${escapeHtml(String(cause.probability))}%</span>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill ${escapeHtml(cause.level)}"
+                                 style="width: ${Math.min(100, Math.max(0, cause.probability))}%"
+                                 role="progressbar"
+                                 aria-valuenow="${cause.probability}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100"
+                                 aria-label="${escapeHtml(cause.cause)} probability ${escapeHtml(String(cause.probability))}%">
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const evidenceHtml = data.evidence.map(item => `
+                    <li class="evidence-item">
+                        <span class="evidence-bullet" aria-hidden="true"></span>
+                        <span>${escapeHtml(item)}</span>
+                    </li>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="discrepancy-analysis">
+                        <h3>
+                            <span aria-hidden="true">&#x1F50D;</span>
+                            Root Cause Analysis
+                        </h3>
+                        <div class="probability-list" aria-label="Root cause probabilities">
+                            ${probabilitiesHtml}
+                        </div>
+                        <div class="evidence-section">
+                            <h4>Supporting Evidence</h4>
+                            <ul class="evidence-list" aria-label="Evidence for analysis">
+                                ${evidenceHtml}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load analysis. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
+
+        /**
+         * Handle alert dismissal
+         */
+        async function handleDismissAlert(alertId) {
+            try {
+                await dismissAlert(alertId);
+                const alertEl = document.querySelector(`[data-alert-id="${alertId}"]`);
+                if (alertEl) {
+                    alertEl.style.opacity = '0';
+                    alertEl.style.transform = 'translateX(100%)';
+                    setTimeout(() => alertEl.remove(), 300);
+                }
+            } catch (error) {
+                console.error('Error dismissing alert:', error);
+            }
+        }
+
+        /**
+         * Handle suggestion review action
+         */
+        async function handleReviewSuggestion(suggestionId, action, event) {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = action === 'approve' ? 'Approving...' : 'Rejecting...';
+
+            try {
+                await submitSuggestionAction(suggestionId, action);
+
+                // Show feedback (in real implementation, would refresh the list)
+                const card = btn.closest('.suggestion-card');
+                card.style.opacity = '0.5';
+                card.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="font-weight: 600; color: var(--success-color-text);">
+                            ${action === 'approve' ? 'Match approved!' : 'Suggestion rejected'}
+                        </p>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                            This action has been recorded. (Mock - API not connected)
+                        </p>
+                    </div>
+                `;
+            } catch (error) {
+                btn.disabled = false;
+                btn.textContent = action === 'approve' ? 'Approve Match' : 'Reject';
+                console.error('Error processing suggestion:', error);
+            }
+        }
+
+        /**
+         * Switch between AI Insights tabs
+         */
+        function switchAITab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.ai-tab').forEach(tab => {
+                const isActive = tab.id === `tab-${tabName}`;
+                tab.classList.toggle('active', isActive);
+                tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            // Update tab panels
+            document.querySelectorAll('.ai-tab-content').forEach(panel => {
+                const isActive = panel.id === `panel-${tabName}`;
+                panel.classList.toggle('active', isActive);
+                panel.hidden = !isActive;
+            });
+        }
+
+        /**
+         * Toggle match explanation row
+         */
+        function toggleMatchExplanation(matchId, rowElement) {
+            const explanationRow = document.getElementById(`explanation-${matchId}`);
+            const isExpanded = rowElement.classList.contains('expanded');
+
+            // Toggle classes
+            rowElement.classList.toggle('expanded');
+            explanationRow.classList.toggle('visible');
+
+            // Update aria-expanded for accessibility
+            rowElement.setAttribute('aria-expanded', String(!isExpanded));
+
+            if (!isExpanded && !explanationRow.dataset.loaded) {
+                loadMatchExplanation(matchId, explanationRow);
+            }
+        }
+
+        /**
+         * Load match explanation content
+         */
+        async function loadMatchExplanation(matchId, container) {
+            const contentDiv = container.querySelector('.match-explanation-content');
+            contentDiv.innerHTML = '<div class="loading"><div class="spinner"></div>Loading explanation...</div>';
+
+            try {
+                const explanation = await fetchMatchExplanation(matchId);
+                container.dataset.loaded = 'true';
+
+                const criteriaHtml = explanation.criteria.map(criterion => `
+                    <div class="criteria-item">
+                        <span class="criteria-status ${escapeHtml(criterion.status)}" aria-hidden="true">
+                            ${criterion.status === 'pass' ? '&#x2713;' : criterion.status === 'partial' ? '&#x25CB;' : '&#x2717;'}
+                        </span>
+                        <div class="criteria-details">
+                            <div class="criteria-name">${escapeHtml(criterion.name)}</div>
+                            <div class="criteria-value">${escapeHtml(criterion.value)}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                contentDiv.innerHTML = `
+                    <div class="explanation-summary">
+                        <span class="explanation-icon" aria-hidden="true">&#x2713;</span>
+                        <span class="explanation-text">${escapeHtml(explanation.summary)}</span>
+                    </div>
+                    <div class="match-criteria-grid">
+                        ${criteriaHtml}
+                    </div>
+                `;
+            } catch (error) {
+                contentDiv.innerHTML = '<div class="error-state">Failed to load explanation</div>';
+            }
+        }
+
+        // =====================================================
+        // INITIALIZATION AND REFRESH
+        // =====================================================
+
+        /**
+         * Simulate network delay for mock data
+         */
+        function simulateNetworkDelay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        /**
+         * Initialize all AI Insights components
+         */
+        async function initializeAIInsights() {
+            // Load all AI components in parallel
+            await Promise.all([
+                renderExecutiveSummary(),
+                renderAnomalyAlerts(),
+                renderPatternDetection(),
+                renderIntelligentSuggestions(),
+                renderDiscrepancyAnalysis()
+            ]);
+        }
+
+        /**
+         * Refresh all AI Insights
+         */
+        async function refreshAIInsights() {
+            const btn = document.getElementById('refreshAiBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span aria-hidden="true">&#x21BB;</span> Refreshing...';
+
+            // Reset dismissed alerts on manual refresh
+            dismissedAlerts.clear();
+
+            try {
+                await initializeAIInsights();
+            } catch (error) {
+                console.error('Error refreshing AI insights:', error);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span aria-hidden="true">&#x21BB;</span> Refresh Insights';
+            }
+        }
     </script>
 </body>
 </html>
