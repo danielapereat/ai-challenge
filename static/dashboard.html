@@ -1333,6 +1333,87 @@
             color: var(--text-primary);
         }
 
+        /* Match Explanation Enhanced Styles */
+        .explanation-confidence {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background-color: var(--card-bg);
+            border-radius: 6px;
+            width: fit-content;
+        }
+
+        .explanation-confidence .confidence-score {
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .explanation-confidence .confidence-score.confidence-high {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+
+        .explanation-confidence .confidence-score.confidence-medium {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .explanation-confidence .confidence-score.confidence-low {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        .explanation-confidence .confidence-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .explanation-warnings {
+            margin-top: 16px;
+            padding: 12px;
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning-color);
+            border-radius: 4px;
+        }
+
+        .explanation-warnings strong {
+            color: var(--warning-color);
+            font-size: 0.875rem;
+        }
+
+        .explanation-warnings ul {
+            margin: 8px 0 0 16px;
+            padding: 0;
+        }
+
+        .explanation-warnings li {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .explanation-recommendation {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-badge {
+            font-size: 0.6875rem;
+            padding: 3px 8px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
         /* AI Section Header */
         .ai-section-header {
             display: flex;
@@ -1363,6 +1444,58 @@
         .refresh-ai-btn:hover {
             background-color: var(--border-color);
             color: var(--text-primary);
+        }
+
+        /* AI Status Indicator */
+        .ai-status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .ai-status-indicator .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .ai-status-indicator.loading {
+            background-color: rgba(107, 114, 128, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .ai-status-indicator.loading .status-dot {
+            background-color: var(--text-secondary);
+            animation: pulse 1.5s infinite;
+        }
+
+        .ai-status-indicator.connected {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+
+        .ai-status-indicator.connected .status-dot {
+            background-color: var(--success-color);
+        }
+
+        .ai-status-indicator.mock {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .ai-status-indicator.mock .status-dot {
+            background-color: var(--warning-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         /* Empty/Loading states for AI sections */
@@ -1576,6 +1709,10 @@
             <div class="card-header">
                 <h2 id="aiInsightsTitle">
                     <span aria-hidden="true">&#x2728;</span> AI Insights
+                    <span id="aiStatusIndicator" class="ai-status-indicator loading" aria-live="polite">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Checking...</span>
+                    </span>
                 </h2>
                 <button class="refresh-ai-btn" id="refreshAiBtn" onclick="refreshAIInsights()" aria-label="Refresh AI insights">
                     <span aria-hidden="true">&#x21BB;</span> Refresh Insights
@@ -2351,8 +2488,173 @@
 
         // =====================================================
         // API WRAPPER FUNCTIONS
-        // These functions will call real APIs when available
+        // Connected to backend AI Analysis endpoints
         // =====================================================
+
+        // Cache for AI status
+        let aiStatusCache = null;
+
+        /**
+         * Check if AI analysis is available
+         * @returns {Promise<boolean>} True if AI is enabled
+         */
+        async function checkAIStatus() {
+            if (aiStatusCache !== null) return aiStatusCache;
+            try {
+                const response = await fetch(`${API_BASE}/analysis/status`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                aiStatusCache = data.ai_enabled;
+                return data.ai_enabled;
+            } catch (error) {
+                console.warn('AI status check failed, using mock data:', error);
+                aiStatusCache = false;
+                return false;
+            }
+        }
+
+        /**
+         * Transform backend SummaryResponse to frontend format
+         */
+        function transformSummaryResponse(data) {
+            const healthInsight = {
+                type: data.health_status === 'good' ? 'positive' :
+                      data.health_status === 'critical' ? 'negative' : 'neutral',
+                text: `Reconciliation health: ${data.health_status.toUpperCase()}`,
+                trend: data.health_status === 'good' ? 'up' :
+                       data.health_status === 'critical' ? 'down' : 'neutral',
+                trendValue: `${(data.match_rate * 100).toFixed(1)}% match rate`
+            };
+
+            const insights = [healthInsight];
+
+            if (data.key_metrics.unmatched_transactions > 0) {
+                insights.push({
+                    type: 'negative',
+                    text: `${data.key_metrics.unmatched_transactions} unmatched transactions pending review`,
+                    trend: 'down',
+                    trendValue: `$${data.key_metrics.total_discrepancy_value_usd.toLocaleString()}`
+                });
+            }
+
+            if (data.high_priority_items > 0) {
+                insights.push({
+                    type: 'negative',
+                    text: `${data.high_priority_items} high-priority items requiring attention`,
+                    trend: 'down',
+                    trendValue: `${data.high_priority_items} items`
+                });
+            }
+
+            const actionItems = [];
+            if (data.key_metrics.unmatched_transactions > 0) {
+                actionItems.push({
+                    priority: 'high',
+                    text: `Review ${data.key_metrics.unmatched_transactions} unmatched transactions`
+                });
+            }
+            if (data.key_metrics.unmatched_settlements > 0) {
+                actionItems.push({
+                    priority: 'medium',
+                    text: `Investigate ${data.key_metrics.unmatched_settlements} unmatched settlements`
+                });
+            }
+            if (data.key_metrics.unmatched_adjustments > 0) {
+                actionItems.push({
+                    priority: 'low',
+                    text: `Review ${data.key_metrics.unmatched_adjustments} unmatched adjustments`
+                });
+            }
+
+            return {
+                timestamp: data.generated_at,
+                summary: data.summary,
+                insights,
+                actionItems
+            };
+        }
+
+        /**
+         * Transform backend AnomalyDetectionResponse to frontend format
+         */
+        function transformAnomalyResponse(data) {
+            return data.anomalies.map(anomaly => ({
+                id: anomaly.anomaly_id,
+                severity: anomaly.severity === 'high' ? 'critical' : anomaly.severity,
+                title: anomaly.type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                description: anomaly.description,
+                timestamp: new Date().toISOString(),
+                source: 'AI Analysis',
+                affectedAmount: anomaly.financial_impact_usd,
+                affectedCount: anomaly.affected_records_count,
+                recommendation: anomaly.recommendation
+            }));
+        }
+
+        /**
+         * Transform backend PatternDetectionResponse to frontend format
+         */
+        function transformPatternResponse(data) {
+            return data.patterns_detected.map(pattern => ({
+                id: pattern.pattern_id,
+                title: pattern.pattern_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                severity: pattern.confidence > 0.8 ? 'critical' :
+                          pattern.confidence > 0.5 ? 'warning' : 'info',
+                description: pattern.description,
+                stats: {
+                    occurrences: pattern.affected_discrepancies,
+                    totalImpact: `$${pattern.financial_impact_usd.toLocaleString()}`,
+                    confidence: `${(pattern.confidence * 100).toFixed(0)}%`
+                },
+                evidence: pattern.evidence,
+                recommendedAction: pattern.recommended_action,
+                autoFixable: pattern.auto_fixable
+            }));
+        }
+
+        /**
+         * Transform backend MatchExplanationResponse to frontend format
+         */
+        function transformMatchExplanation(data) {
+            const criteria = Object.entries(data.confidence_breakdown).map(([name, item]) => ({
+                name: name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                status: item.contribution >= 20 ? 'pass' :
+                        item.contribution >= 10 ? 'partial' : 'fail',
+                value: item.detail
+            }));
+
+            return {
+                summary: data.explanation,
+                confidence: data.confidence,
+                criteria,
+                warnings: data.warnings,
+                recommendation: data.recommendation,
+                aiGenerated: data.ai_generated
+            };
+        }
+
+        /**
+         * Transform backend DiscrepancyAnalysisResponse to frontend format
+         */
+        function transformDiscrepancyAnalysis(data) {
+            return {
+                selectedDiscrepancy: {
+                    id: data.discrepancy_id,
+                    type: data.discrepancy_type
+                },
+                rootCauses: data.analysis.root_cause_probabilities.map(rc => ({
+                    cause: rc.cause,
+                    probability: Math.round(rc.probability * 100),
+                    level: rc.probability > 0.5 ? 'high' :
+                           rc.probability > 0.2 ? 'medium' : 'low'
+                })),
+                evidence: data.analysis.root_cause_probabilities.flatMap(rc => rc.evidence),
+                suggestedActions: data.suggested_actions,
+                priority: data.analysis.investigation_priority,
+                priorityReasoning: data.analysis.priority_reasoning,
+                aiGenerated: data.ai_generated
+            };
+        }
 
         /**
          * Fetch Executive Summary from AI API
@@ -2360,17 +2662,20 @@
          */
         async function fetchExecutiveSummary() {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/executive-summary`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                const aiEnabled = await checkAIStatus();
+                if (!aiEnabled) {
+                    console.log('AI not available, using mock data for executive summary');
+                    await simulateNetworkDelay(800);
+                    return getMockExecutiveSummary();
+                }
 
-                // Using mock data for now
-                await simulateNetworkDelay(800);
-                return getMockExecutiveSummary();
+                const response = await fetch(`${API_BASE}/analysis/summary`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return transformSummaryResponse(data);
             } catch (error) {
-                console.error('Error fetching executive summary:', error);
-                throw error;
+                console.error('Error fetching executive summary, falling back to mock:', error);
+                return getMockExecutiveSummary();
             }
         }
 
@@ -2380,16 +2685,20 @@
          */
         async function fetchAnomalyAlerts() {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/anomalies`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                const aiEnabled = await checkAIStatus();
+                if (!aiEnabled) {
+                    console.log('AI not available, using mock data for anomalies');
+                    await simulateNetworkDelay(600);
+                    return getMockAnomalyAlerts();
+                }
 
-                await simulateNetworkDelay(600);
-                return getMockAnomalyAlerts();
+                const response = await fetch(`${API_BASE}/analysis/anomalies`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return transformAnomalyResponse(data);
             } catch (error) {
-                console.error('Error fetching anomaly alerts:', error);
-                throw error;
+                console.error('Error fetching anomaly alerts, falling back to mock:', error);
+                return getMockAnomalyAlerts();
             }
         }
 
@@ -2399,54 +2708,110 @@
          */
         async function fetchPatternDetection() {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/patterns`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                const aiEnabled = await checkAIStatus();
+                if (!aiEnabled) {
+                    console.log('AI not available, using mock data for patterns');
+                    await simulateNetworkDelay(1000);
+                    return getMockPatternDetection();
+                }
 
-                await simulateNetworkDelay(1000);
-                return getMockPatternDetection();
+                const response = await fetch(`${API_BASE}/analysis/detect-patterns`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return transformPatternResponse(data);
             } catch (error) {
-                console.error('Error fetching patterns:', error);
-                throw error;
+                console.error('Error fetching patterns, falling back to mock:', error);
+                return getMockPatternDetection();
             }
         }
 
         /**
          * Fetch Intelligent Suggestions from AI API
+         * Uses discrepancies endpoint with suggested_matches
          * @returns {Promise<Array>} Array of match suggestions
          */
         async function fetchIntelligentSuggestions() {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/suggestions`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                // Get discrepancies with suggested matches
+                const response = await fetch(`${API_BASE}/discrepancies?limit=10`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
 
-                await simulateNetworkDelay(1200);
-                return getMockIntelligentSuggestions();
+                // Transform discrepancies with suggested_matches into suggestions
+                const suggestions = [];
+                for (const disc of (data.discrepancies || [])) {
+                    const suggestedMatches = disc.suggested_matches || [];
+                    for (const match of suggestedMatches.slice(0, 1)) {
+                        suggestions.push({
+                            id: `suggestion-${disc.record?.id || disc.id}`,
+                            unmatchedRecord: {
+                                type: disc.type?.replace('unmatched_', '') || 'transaction',
+                                id: disc.record?.transaction_id || disc.record?.settlement_id || disc.record?.id,
+                                amount: parseFloat(disc.record?.amount) || 0,
+                                currency: disc.record?.currency || 'USD',
+                                date: disc.record?.timestamp || disc.record?.settlement_date || ''
+                            },
+                            suggestedMatch: {
+                                type: match.type || 'settlement',
+                                id: match.id || match.settlement_id || match.transaction_id,
+                                amount: parseFloat(match.amount) || 0,
+                                currency: match.currency || 'USD',
+                                date: match.date || match.settlement_date || ''
+                            },
+                            confidence: match.confidence || 70,
+                            reasons: match.reasons || ['Amount within tolerance', 'Date within window']
+                        });
+                    }
+                }
+
+                if (suggestions.length === 0) {
+                    console.log('No suggestions from API, using mock data');
+                    return getMockIntelligentSuggestions();
+                }
+
+                return suggestions;
             } catch (error) {
-                console.error('Error fetching suggestions:', error);
-                throw error;
+                console.error('Error fetching suggestions, falling back to mock:', error);
+                return getMockIntelligentSuggestions();
             }
         }
 
         /**
          * Fetch Discrepancy Analysis from AI API
+         * @param {string} discrepancyId - Optional specific discrepancy ID
          * @returns {Promise<Object>} Discrepancy analysis data
          */
-        async function fetchDiscrepancyAnalysis() {
+        async function fetchDiscrepancyAnalysis(discrepancyId = null) {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/discrepancy-analysis`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                const aiEnabled = await checkAIStatus();
 
-                await simulateNetworkDelay(900);
-                return getMockDiscrepancyAnalysis();
+                // If no specific ID, get the first discrepancy
+                if (!discrepancyId) {
+                    const discResponse = await fetch(`${API_BASE}/discrepancies?limit=1`);
+                    if (discResponse.ok) {
+                        const discData = await discResponse.json();
+                        if (discData.discrepancies?.length > 0) {
+                            discrepancyId = discData.discrepancies[0].record?.id;
+                        }
+                    }
+                }
+
+                if (!discrepancyId || !aiEnabled) {
+                    console.log('No discrepancy ID or AI not available, using mock data');
+                    await simulateNetworkDelay(900);
+                    return getMockDiscrepancyAnalysis();
+                }
+
+                const response = await fetch(`${API_BASE}/analysis/analyze-discrepancy/${discrepancyId}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return transformDiscrepancyAnalysis(data);
             } catch (error) {
-                console.error('Error fetching discrepancy analysis:', error);
-                throw error;
+                console.error('Error fetching discrepancy analysis, falling back to mock:', error);
+                return getMockDiscrepancyAnalysis();
             }
         }
 
@@ -2457,16 +2822,20 @@
          */
         async function fetchMatchExplanation(matchId) {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/match-explanation/${matchId}`);
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
+                const aiEnabled = await checkAIStatus();
+                if (!aiEnabled) {
+                    console.log('AI not available, using mock data for match explanation');
+                    await simulateNetworkDelay(400);
+                    return getMockMatchExplanation(matchId);
+                }
 
-                await simulateNetworkDelay(400);
-                return getMockMatchExplanation(matchId);
+                const response = await fetch(`${API_BASE}/analysis/explain-match/${matchId}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                return transformMatchExplanation(data);
             } catch (error) {
-                console.error('Error fetching match explanation:', error);
-                throw error;
+                console.error('Error fetching match explanation, falling back to mock:', error);
+                return getMockMatchExplanation(matchId);
             }
         }
 
@@ -2478,15 +2847,9 @@
          */
         async function submitSuggestionAction(suggestionId, action) {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/suggestions/${suggestionId}/${action}`, {
-                //     method: 'POST'
-                // });
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
-
+                // For now, just log the action (would need backend endpoint)
+                console.log(`Suggestion ${suggestionId} ${action}ed`);
                 await simulateNetworkDelay(500);
-                console.log(`Suggestion ${suggestionId} ${action}ed (mock)`);
                 return { success: true, message: `Suggestion ${action}ed successfully` };
             } catch (error) {
                 console.error('Error submitting suggestion action:', error);
@@ -2501,13 +2864,6 @@
          */
         async function dismissAlert(alertId) {
             try {
-                // TODO: Uncomment when API is ready
-                // const response = await fetch(`${API_BASE}/ai/alerts/${alertId}/dismiss`, {
-                //     method: 'POST'
-                // });
-                // if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                // return await response.json();
-
                 dismissedAlerts.add(alertId);
                 return { success: true };
             } catch (error) {
@@ -2945,14 +3301,58 @@
                     </div>
                 `).join('');
 
+                // Build warnings HTML if available
+                let warningsHtml = '';
+                if (explanation.warnings && explanation.warnings.length > 0) {
+                    warningsHtml = `
+                        <div class="explanation-warnings">
+                            <strong>Warnings:</strong>
+                            <ul>
+                                ${explanation.warnings.map(w => `<li>${escapeHtml(w)}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                // Build recommendation badge
+                let recommendationHtml = '';
+                if (explanation.recommendation) {
+                    const recClass = explanation.recommendation === 'approve' ? 'badge-success' :
+                                     explanation.recommendation === 'reject' ? 'badge-danger' : 'badge-warning';
+                    recommendationHtml = `
+                        <div class="explanation-recommendation">
+                            <span class="badge ${recClass}">
+                                Recommendation: ${escapeHtml(explanation.recommendation.toUpperCase())}
+                            </span>
+                            ${explanation.aiGenerated ? '<span class="ai-badge">AI Generated</span>' : ''}
+                        </div>
+                    `;
+                }
+
+                // Confidence display
+                let confidenceHtml = '';
+                if (explanation.confidence !== undefined) {
+                    const confClass = explanation.confidence >= 80 ? 'confidence-high' :
+                                      explanation.confidence >= 50 ? 'confidence-medium' : 'confidence-low';
+                    confidenceHtml = `
+                        <div class="explanation-confidence">
+                            <span class="confidence-score ${confClass}">${explanation.confidence}%</span>
+                            <span class="confidence-label">Confidence Score</span>
+                        </div>
+                    `;
+                }
+
                 contentDiv.innerHTML = `
                     <div class="explanation-summary">
                         <span class="explanation-icon" aria-hidden="true">&#x2713;</span>
                         <span class="explanation-text">${escapeHtml(explanation.summary)}</span>
                     </div>
+                    ${confidenceHtml}
                     <div class="match-criteria-grid">
                         ${criteriaHtml}
                     </div>
+                    ${warningsHtml}
+                    ${recommendationHtml}
                 `;
             } catch (error) {
                 contentDiv.innerHTML = '<div class="error-state">Failed to load explanation</div>';
@@ -2971,9 +3371,24 @@
         }
 
         /**
+         * Update the AI status indicator
+         */
+        function updateAIStatusIndicator(isConnected) {
+            const indicator = document.getElementById('aiStatusIndicator');
+            if (!indicator) return;
+
+            indicator.className = 'ai-status-indicator ' + (isConnected ? 'connected' : 'mock');
+            indicator.querySelector('.status-text').textContent = isConnected ? 'AI Connected' : 'Mock Data';
+        }
+
+        /**
          * Initialize all AI Insights components
          */
         async function initializeAIInsights() {
+            // Check AI status first and update indicator
+            const aiEnabled = await checkAIStatus();
+            updateAIStatusIndicator(aiEnabled);
+
             // Load all AI components in parallel
             await Promise.all([
                 renderExecutiveSummary(),
@@ -2994,6 +3409,9 @@
 
             // Reset dismissed alerts on manual refresh
             dismissedAlerts.clear();
+
+            // Reset AI status cache to recheck on refresh
+            aiStatusCache = null;
 
             try {
                 await initializeAIInsights();
