@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, date
+from datetime import datetime
+from datetime import date as date_type
 from decimal import Decimal
 from typing import Optional
 
@@ -17,7 +18,7 @@ class Settlement(Base):
     amount: Mapped[Decimal] = mapped_column(Numeric(18, 2))
     gross_amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(18, 2), nullable=True)
     currency: Mapped[str] = mapped_column(String(3))
-    settlement_date: Mapped[date] = mapped_column(Date)
+    settlement_date: Mapped[date_type] = mapped_column(Date)
     transaction_reference: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, index=True)
     fees_deducted: Mapped[Decimal] = mapped_column(Numeric(18, 2), default=Decimal("0"))
     bank_name: Mapped[str] = mapped_column(String(100))

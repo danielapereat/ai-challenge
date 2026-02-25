@@ -1,7 +1,8 @@
 from datetime import datetime, date, timedelta
+from typing import Union
 
 
-def days_between(date1: date | datetime, date2: date | datetime) -> int:
+def days_between(date1: Union[date, datetime], date2: Union[date, datetime]) -> int:
     """Calculate absolute number of days between two dates."""
     if isinstance(date1, datetime):
         date1 = date1.date()

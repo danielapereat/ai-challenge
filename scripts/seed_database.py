@@ -69,8 +69,8 @@ def parse_transactions(data: list[dict]) -> list[TransactionCreate]:
     transactions = []
     for item in data:
         try:
-            # Parse timestamp - handle various formats
-            timestamp = item.get("timestamp")
+            # Parse timestamp - use created_at from JSON
+            timestamp = item.get("timestamp") or item.get("created_at")
             if isinstance(timestamp, str):
                 # Try ISO format first
                 try:
@@ -78,15 +78,24 @@ def parse_transactions(data: list[dict]) -> list[TransactionCreate]:
                 except ValueError:
                     timestamp = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
 
+            # Map fields from generated JSON to schema
+            # JSON: merchant_reference -> Schema: merchant_order_id
+            # JSON: created_at -> Schema: timestamp
+            # JSON: customer_email -> Schema: customer_id
+            # JSON: metadata.country -> Schema: country
+            merchant_order_id = item.get("merchant_order_id") or item.get("merchant_reference", "")
+            customer_id = item.get("customer_id") or item.get("customer_email", "")
+            country = item.get("country") or (item.get("metadata", {}).get("country", "XX") if isinstance(item.get("metadata"), dict) else "XX")
+
             txn = TransactionCreate(
                 transaction_id=item["transaction_id"],
-                merchant_order_id=item["merchant_order_id"],
+                merchant_order_id=merchant_order_id,
                 amount=Decimal(str(item["amount"])),
                 currency=item["currency"],
                 timestamp=timestamp,
                 status=item["status"],
-                customer_id=item["customer_id"],
-                country=item["country"],
+                customer_id=customer_id,
+                country=country,
             )
             transactions.append(txn)
         except Exception as e:
@@ -100,24 +109,46 @@ def parse_settlements(data: list[dict]) -> list[SettlementCreate]:
     settlements = []
     for item in data:
         try:
-            # Parse settlement_date
+            # Parse settlement_date - handle both date and datetime formats
             settlement_date = item.get("settlement_date")
             if isinstance(settlement_date, str):
-                settlement_date = date.fromisoformat(settlement_date)
+                # Handle datetime string with time component
+                if "T" in settlement_date:
+                    settlement_date = datetime.fromisoformat(settlement_date.replace("Z", "+00:00")).date()
+                else:
+                    settlement_date = date.fromisoformat(settlement_date)
+
+            # Map fields from generated JSON to schema
+            # JSON: settlement_id -> Schema: settlement_reference
+            # JSON: provider -> Schema: bank_name
+            # JSON: original_amount -> Schema: gross_amount
+            # JSON: fee_applied -> Schema: fees_deducted (converted to actual amount)
+            settlement_reference = item.get("settlement_reference") or item.get("settlement_id")
+            bank_name = item.get("bank_name") or item.get("provider", "unknown")
+            gross_amount = item.get("gross_amount") or item.get("original_amount")
+
+            # Calculate fees_deducted from fee_applied percentage if available
+            amount = Decimal(str(item["amount"]))
+            fee_applied = item.get("fee_applied")
+            if fee_applied:
+                # fee_applied is a percentage, calculate the actual fee amount
+                fees_deducted = amount * Decimal(str(fee_applied)) / Decimal("100")
+            else:
+                fees_deducted = Decimal(str(item.get("fees_deducted", "0")))
 
             stl = SettlementCreate(
-                settlement_reference=item["settlement_reference"],
-                amount=Decimal(str(item["amount"])),
-                gross_amount=Decimal(str(item["gross_amount"])) if item.get("gross_amount") else None,
+                settlement_reference=settlement_reference,
+                amount=amount,
+                gross_amount=Decimal(str(gross_amount)) if gross_amount else None,
                 currency=item["currency"],
                 settlement_date=settlement_date,
                 transaction_reference=item.get("transaction_reference"),
-                fees_deducted=Decimal(str(item.get("fees_deducted", "0"))),
-                bank_name=item["bank_name"],
+                fees_deducted=fees_deducted,
+                bank_name=bank_name,
             )
             settlements.append(stl)
         except Exception as e:
-            print(f"Error parsing settlement {item.get('settlement_reference', 'unknown')}: {e}")
+            print(f"Error parsing settlement {item.get('settlement_reference') or item.get('settlement_id', 'unknown')}: {e}")
 
     return settlements
 
@@ -127,19 +158,32 @@ def parse_adjustments(data: list[dict]) -> list[AdjustmentCreate]:
     adjustments = []
     for item in data:
         try:
-            # Parse date
-            adj_date = item.get("date")
+            # Parse date - use adjustment_date from JSON or date
+            adj_date = item.get("date") or item.get("adjustment_date")
             if isinstance(adj_date, str):
-                adj_date = date.fromisoformat(adj_date)
+                # Handle both date and datetime formats
+                if "T" in adj_date:
+                    adj_date = datetime.fromisoformat(adj_date.replace("Z", "+00:00")).date()
+                else:
+                    adj_date = date.fromisoformat(adj_date)
+
+            # Map fields from generated JSON to schema
+            # JSON: transaction_id -> Schema: transaction_reference
+            # JSON: adjustment_amount -> Schema: amount
+            # JSON: adjustment_date -> Schema: date
+            # JSON: reason -> Schema: reason_code
+            transaction_reference = item.get("transaction_reference") or item.get("transaction_id")
+            amount = item.get("amount") or item.get("adjustment_amount")
+            reason_code = item.get("reason_code") or item.get("reason")
 
             adj = AdjustmentCreate(
                 adjustment_id=item["adjustment_id"],
-                transaction_reference=item.get("transaction_reference"),
-                amount=Decimal(str(item["amount"])),
+                transaction_reference=transaction_reference,
+                amount=Decimal(str(amount)),
                 currency=item["currency"],
                 type=item["type"],
                 date=adj_date,
-                reason_code=item.get("reason_code"),
+                reason_code=reason_code,
             )
             adjustments.append(adj)
         except Exception as e:

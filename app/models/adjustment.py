@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, date
+from datetime import datetime
+from datetime import date as date_type
 from decimal import Decimal
 from typing import Optional
 
@@ -18,7 +19,7 @@ class Adjustment(Base):
     amount: Mapped[Decimal] = mapped_column(Numeric(18, 2))
     currency: Mapped[str] = mapped_column(String(3))
     type: Mapped[str] = mapped_column(String(20))  # refund | chargeback
-    date: Mapped[date] = mapped_column(Date)
+    date: Mapped[date_type] = mapped_column(Date)
     reason_code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
