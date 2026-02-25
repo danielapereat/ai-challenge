@@ -447,6 +447,14 @@ class ReportingService:
 
     async def _calculate_summary(self, discrepancies: list[dict]) -> dict:
         """Calculate summary statistics for discrepancies."""
+        # Map singular type names to plural keys for the summary
+        type_mapping = {
+            "unmatched_transaction": "unmatched_transactions",
+            "unmatched_settlement": "unmatched_settlements",
+            "unmatched_adjustment": "unmatched_adjustments",
+            "amount_mismatch": "amount_mismatches",
+        }
+
         by_type = {
             "unmatched_transactions": 0,
             "unmatched_settlements": 0,
@@ -458,8 +466,10 @@ class ReportingService:
 
         for d in discrepancies:
             dtype = d["type"]
-            if dtype in by_type:
-                by_type[dtype] += 1
+            # Map the singular type to the plural key
+            summary_key = type_mapping.get(dtype)
+            if summary_key and summary_key in by_type:
+                by_type[summary_key] += 1
 
             record = d.get("record", {})
             amount_str = record.get("amount")
